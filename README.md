@@ -12,6 +12,24 @@
                 2017-10-26 17:35:07 [ERROR] [5082.Thread-3:123145453871104] [error_Traceback.wrap] -- "GET /get_user_info HTTP/1.1" 500
     *  error_Traceback.log：发生错误的同时，记录当时的堆栈信息，方便查错。不再举例。
 
+## 使用方式
+*  把 log_exception 直接通过装饰器的方式加在所需要记录日志的程序代码上。但是有三个要求：
+    *  需要装饰的程序代码必须是项目url对应的类或方法。
+    *  整个程序内最好不要有Try——except模块，因为需要用log_exception记录错误。
+    *  方法中的第一个参数必须是request（除self）。例如:
+
+            @log_exception
+            def jsapi_signature(request):
+                ...
+
+            @method_decorator(log_exception, name='get')
+            @method_decorator(log_exception, name='post')
+            class get_user_info(View):
+                def get(self, request):
+                        ...
+                def post(self, request):
+                        ...
+                    
 ## 发件原理
 * 第一种发件模式：直接发送，需要配置setting文件，配置如下：
 
@@ -24,7 +42,7 @@
 		EMAIL_HOST_USER = '1943336161@qq.com'    #发送邮件的邮箱地址
 		EMAIL_HOST_PASSWORD = 'eztqbvljzyokgbae'         #发送邮件的邮箱密码
 		DEFAULT_FROM_EMAIL = '叶孟豪<1943336161@qq.com>'
-	另外，还需要对django的log进行配置，见。
+	另外，还需要对django的log进行配置，见log_setting.py文件。
 
 * 第二种发件模式：代理发送，向指定API发送请求，由已经配置好的服务器进行发送。
 

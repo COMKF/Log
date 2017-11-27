@@ -3,8 +3,6 @@ import traceback
 import datetime
 
 import requests
-from django.conf import settings
-from django.core.mail import send_mail
 from django.http import JsonResponse
 
 from Log.models import Error_msg
@@ -40,19 +38,19 @@ def log_exception(function):
                 # 生成500错误记录
                 build_500_http_error(method, path, scheme)
             except:
-                send_mail('服务错误警报！！（来自：alipay_zzjj项目）', '生成500错误记录爆炸了' + path, settings.EMAIL_HOST_USER, TO_EMAILS, fail_silently=False)
+                send_error_info_to_email('生成500错误记录爆炸了'+ path)
 
             try:
                 # 生成错误的堆栈信息
                 build_traceback_error(data, scheme, path, method)
             except:
-                send_mail('服务错误警报！！（来自：alipay_zzjj项目）', '生成堆栈信息爆炸了' + path, settings.EMAIL_HOST_USER, TO_EMAILS, fail_silently=False)
+                send_error_info_to_email('生成堆栈信息爆炸了'+ path)
 
             try:
                 # 向邮箱发送警报信息
                 update_error_msg_AND_send_by_time(scheme, path, method, host)
             except:
-                send_mail('服务错误警报！！（来自：alipay_zzjj项目）', '发送邮箱爆炸了', settings.EMAIL_HOST_USER, TO_EMAILS, fail_silently=False)
+                pass
 
             # 在这里可自定义返回的数据
             return JsonResponse({'ok': False,'msg':'if you see this message,that means our server is error. we will repeat it in moments.'})  # 默认返回{'ok': False}
