@@ -7,7 +7,7 @@ from django.http import JsonResponse
 
 from Log.models import Error_msg
 
-EMAIL_URL = 'http://118.89.222.238:8000/email/send_emil/'
+EMAIL_URL = 'http://118.89.222.238/email/send_emil/'
 
 TO_EMAILS = ['1943336161@qq.com', 'mjguocn@163.com']
 
