@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': '程序错误信息',
                 'verbose_name_plural': '程序错误信息',
-                'db_table': 'alipay_log',
             },
         ),
     ]
