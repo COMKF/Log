@@ -38,13 +38,13 @@ def log_exception(function):
                 # 生成500错误记录
                 build_500_http_error(method, path, scheme)
             except:
-                send_error_info_to_email('生成500错误记录爆炸了'+ path)
+                send_error_info_to_email('生成500错误记录爆炸了' + path)
 
             try:
                 # 生成错误的堆栈信息
                 build_traceback_error(data, scheme, path, method)
             except:
-                send_error_info_to_email('生成堆栈信息爆炸了'+ path)
+                send_error_info_to_email('生成堆栈信息爆炸了' + path)
 
             try:
                 # 向邮箱发送警报信息
@@ -53,7 +53,7 @@ def log_exception(function):
                 pass
 
             # 在这里可自定义返回的数据
-            return JsonResponse({'ok': False,'msg':'if you see this message,that means our server is error. we will repeat it in moments.'})  # 默认返回{'ok': False}
+            return JsonResponse({'ok': False, 'msg': '服务器提了一个问题，程序员正在解答。'})  # 默认返回{'ok': False}
         finally:
             pass
 
@@ -121,7 +121,7 @@ def update_error_msg_AND_send_by_time(scheme, path, method, host):
             msg += '错误发生时间：%s' % error_msg.creat_time.strftime("%Y-%m-%d %H:%M:%S") + '\r\n'
             msg += '已发生错误：%s次' % str(error_msg.count) + '\r\n'
             msg += '堆栈信息：\r\n' + traceback_info + '\r\n'
-            msg += '请尽快处理！！\r\n若已解决，请点击http://'+host+'/solveError/' + path + '\r\n'
+            msg += '请尽快处理！！\r\n若已解决，请点击http://' + host + '/solveError/' + path + '\r\n'
             msg += '请注意，该url没有确认的步骤，会改变该错误的状态，请务必真正解决后再点击，不能随意点击。\r\n'
             send_error_info_to_email(msg)
         error_msg.save()
@@ -130,12 +130,12 @@ def update_error_msg_AND_send_by_time(scheme, path, method, host):
         msg += '错误发生时间：%s' % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\r\n'
         msg += '已发生错误：1次' + '\r\n'
         msg += '堆栈信息：\r\n' + traceback_info + '\r\n'
-        msg += '请尽快处理！！\r\n若已解决，请点击http://'+host+'/alipay/solveError/' + path + '\r\n'
+        msg += '请尽快处理！！\r\n若已解决，请点击http://' + host + '/solveError/' + path + '\r\n'
         msg += '请注意，该url没有确认的步骤，会改变该错误的状态，请务必真正解决后再点击，不能随意点击。\r\n'
         send_error_info_to_email(msg)
 
 
-def send_error_info_to_email(msg):
+def send_error_info_to_email(msg, title='服务错误警报！！（来自：alipay_zzjj项目）'):
     '''
     向邮箱发送警报信息。
 
@@ -146,7 +146,7 @@ def send_error_info_to_email(msg):
     # send_mail('服务错误警报！！（来自：alipay_zzjj项目）', msg, settings.EMAIL_HOST_USER, TO_EMAILS, fail_silently=False)
 
     # 委屈求全的处理办法
-    data = {'title': '服务错误警报！！（来自：alipay_zzjj项目）', 'msg': msg, 'TO_EMAILS': TO_EMAILS}
+    data = {'title': title, 'msg': msg, 'TO_EMAILS': TO_EMAILS}
     re = requests.post(url=EMAIL_URL, json=data)
     if re.content != b'success':
         error_msgs = Error_msg.objects.filter(path='send_email_error')

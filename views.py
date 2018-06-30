@@ -1,16 +1,17 @@
 import datetime
+import json
 
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from Log.error_Traceback import log_exception
-from Log.models import Error_msg
+from Log.models import Error_msg, BombboxInfo, CancelBombboxInfoRecord
+# from main.models import OpenUser
+
 
 @method_decorator(ensure_csrf_cookie, name='get')
-@method_decorator(log_exception, name='get')
-@method_decorator(log_exception, name='post')
 class testErrorLog(View):
     def get(self, request):
         Error_msg.objects.get(id='123')
@@ -36,3 +37,41 @@ class solveError(View):
 
     def post(self, request):
         pass
+
+class GetBombboxInfo(View):
+    def post(self, request):
+        '''
+        获取弹框信息
+
+        :param request:
+        :param whichview:
+        :return:
+        '''
+        re = {'ok': False}
+        info = BombboxInfo.objects.filter(state=True)
+        if info:
+            Bombbox_info = info.first()
+            openuser = OpenUser.objects.get(user=request.user)
+            if CancelBombboxInfoRecord.objects.filter(Bombbox=Bombbox_info, user=openuser):
+                return JsonResponse(re)
+            re['ok'] = True
+            re['title'] = Bombbox_info.title
+            re['content'] = Bombbox_info.content
+            re['Bombbox_info_id'] = Bombbox_info.id
+        return JsonResponse(re)
+
+
+class CancelBombboxInfo(View):
+    def post(self, request):
+        '''
+        取消弹框提示
+
+        :param request:
+        :return:
+        '''
+        data = json.loads(request.body)
+        Bombbox_info_id = data.get('Bombbox_info_id', '')
+        Bombbox = BombboxInfo.objects.get(id=Bombbox_info_id)
+        openuser = OpenUser.objects.get(user=request.user)
+        CancelBombboxInfoRecord(Bombbox=Bombbox, user=openuser).save()
+        return JsonResponse({})
