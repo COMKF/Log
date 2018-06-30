@@ -6,11 +6,12 @@
 ###	另外，还需要对django的log进行配置，见log_setting.py文件。
 
 ###  具体的函数及功能：  
-*  log_exception：程序发生错误时的处理程序，相关日志文件有两个：
+*  log_exception：程序发生错误时的处理程序，相关日志文件有两个，相关的model有一个：
 	*  request_error.log：每发生一次错误，记录一个500错误。例子如下：  
 	                    
 	            2017-10-26 17:35:07 [ERROR] [5082.Thread-3:123145453871104] [error_Traceback.wrap] -- "GET /get_user_info HTTP/1.1" 500
 	*  error_Traceback.log：发生错误的同时，记录当时的堆栈信息，方便查错。不再举例。
+	*  Error_msg：系统错误记录，内容详见model表。
 
 ### 使用方式
 *  把 log_exception 直接通过装饰器的方式加在所需要记录日志的程序代码上。但是有三个要求：
@@ -34,7 +35,7 @@
 ###  程序位置：utils.UserOperateUtils
 ###  具体的函数及功能：  
 *  log_user_operate：用户访问项目时，记录相关的信息，保存到数据库中，相关的model有一个：
-	*  UserOperateRecord：记录内容详见model表。
+	*  UserOperateRecord：用户行为记录表，内容详见model表。
 
 ### 使用方式
 *  把 log_user_operate 直接通过装饰器的方式加在所需要记录用户行为的程序代码上。要求和上面 log_exception 一样，用法也一样。
@@ -43,7 +44,7 @@
 ###  程序位置：utils.check_url
 ###  具体的函数及功能： 
 *  check_url_state：以url为主，控制url状态，方便随时挂维护，相关的model有一个：
-	*  Url_state：记录内容详见model表。
+	*  Url_state：url状态记录，内容详见model表。
 
 ### 使用方式
 *  把 check_url_state 直接通过装饰器的方式加在所需要记录用户行为的程序代码上。要求和上面 log_exception 一样，用法也一样。
